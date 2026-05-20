@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de Moradores — Associação Residencial Ermitage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-deep: #0a3d2e;
+      --green-mid: #1a6645;
+      --green-light: #2d9966;
+      --green-soft: #e8f5ee;
+      --green-pale: #f3faf6;
+      --gold: #b8960c;
+      --gold-light: #f5e9a0;
+      --text: #1a2e24;
+      --text-muted: #4a6357;
+      --text-faint: #8aab98;
+      --border: #c8dfd4;
+      --border-light: #e2efe8;
+      --bg: #f8fdf9;
+      --white: #ffffff;
+      --danger: #c0392b;
+      --radius: 10px;
+      --radius-lg: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 4rem;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--green-deep);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .header-emblem {
+      width: 64px; height: 64px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .header-emblem svg { width: 32px; height: 32px; fill: var(--gold); }
+
+    .site-header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.4rem, 4vw, 1.85rem);
+      font-weight: 400;
+      color: #ffffff;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+
+    .site-header p {
+      font-size: 0.82rem;
+      color: var(--gold-light);
+      margin-top: 0.4rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── Progress steps ── */
+    .progress-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border-light);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .step {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--text-faint);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .step.active { color: var(--green-mid); background: var(--green-soft); }
+    .step.done { color: var(--green-light); }
+
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%; border: 1.5px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; flex-shrink: 0;
+    }
+
+    .step.done .step-num { background: var(--green-light); border-color: var(--green-light); color: white; }
+
+    .step-connector { width: 24px; height: 1px; background: var(--border); flex-shrink: 0; }
+
+    /* ── Main container ── */
+    .container { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem 0; }
+
+    /* ── Info box ── */
+    .info-box {
+      background: var(--green-soft);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--green-mid);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .info-box strong { color: var(--green-mid); font-weight: 500; }
+
+    /* ── Sections ── */
+    .form-section {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-header {
+      background: var(--green-pale);
+      border-bottom: 1px solid var(--border-light);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon {
+      width: 36px; height: 36px;
+      background: var(--green-deep);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-icon svg { width: 18px; height: 18px; fill: var(--gold); }
+
+    .section-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--green-deep);
+    }
+
+    .section-body { padding: 1.25rem; }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      letter-spacing: 0.02em;
+    }
+
+    .field label .req { color: var(--danger); margin-left: 2px; }
+
+    .field input[type=text],
+    .field input[type=email],
+    .field input[type=tel],
+    .field input[type=date],
+    .field select,
+    .field textarea {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--green-light);
+      box-shadow: 0 0 0 3px rgba(45, 153, 102, 0.12);
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a6357' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .field input[type=file] {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      background: var(--green-pale);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .field input[type=file]:hover { border-color: var(--green-light); }
+
+    .field .hint {
+      font-size: 0.74rem;
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    /* ── Morador cards ── */
+    #moradores-lista { margin-bottom: 0.75rem; }
+
+    .morador-card {
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+      animation: slideIn 0.25s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .morador-card-header {
+      background: var(--green-pale);
+      padding: 0.65rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .morador-card-title {
+      font-size: 0.82rem; font-weight: 500; color: var(--green-mid);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .morador-card-title svg { width: 15px; height: 15px; fill: var(--green-mid); }
+
+    .btn-remove-morador {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-faint); font-size: 0.78rem;
+      padding: 3px 8px; border-radius: 6px;
+      display: flex; align-items: center; gap: 4px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .btn-remove-morador:hover { color: var(--danger); background: #fdecea; }
+
+    .morador-card-body { padding: 1rem; }
+
+    /* ── Botões ── */
+    .btn-add-morador {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--green-mid);
+      background: transparent;
+      border: 1.5px dashed var(--green-mid);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-add-morador:hover { background: var(--green-soft); }
+    .btn-add-morador svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .btn-submit {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 1.75rem;
+      padding: 14px;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem;
+      color: white;
+      background: var(--green-deep);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-submit:hover { background: var(--green-mid); }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit svg { width: 18px; height: 18px; fill: var(--gold); }
+
+    /* ── Rodapé do form ── */
+    .form-footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-faint);
+    }
+
+    .form-footer svg { width: 12px; height: 12px; fill: var(--text-faint); vertical-align: -1px; margin-right: 3px; }
+
+    /* ── Tela de sucesso ── */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+    }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: var(--green-soft);
+      border: 2px solid var(--green-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .success-icon svg { width: 34px; height: 34px; fill: var(--green-mid); }
+
+    #success-screen h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem; font-weight: 400;
+      color: var(--green-deep);
+      margin-bottom: 0.6rem;
+    }
+
+    #success-screen p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; max-width: 380px; margin: 0 auto 1.5rem; }
+
+    .btn-novo {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--green-mid);
+      border: 1.5px solid var(--green-mid);
+      border-radius: var(--radius);
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-novo:hover { background: var(--green-soft); }
+    .btn-novo svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* ── Required notice ── */
+    .required-note { font-size: 0.77rem; color: var(--text-faint); margin-bottom: 1.25rem; }
+    .required-note span { color: var(--danger); }
+
+    /* ── Responsive ── */
+    @media (max-width: 520px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 0; }
+      .grid-2 .field, .grid-3 .field { margin-bottom: 1rem; }
+    }
+
+    @media print {
+      .progress-bar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-emblem">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 9v13h7v-6h6v6h7V9L12 2zm0 2.5L20 10v10h-3v-6H7v6H4V10l8-5.5z"/>
+      </svg>
+    </div>
+    <h1>Associação Residencial Ermitage</h1>
+    <p>Atualização do cadastro de moradores</p>
+  </header>
+
+  <nav class="progress-bar" aria-label="Seções do formulário">
+    <div class="step active" onclick="scrollToSection('sec-responsavel')">
+      <div class="step-num">1</div>
+      <span>Responsável</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" onclick="scrollToSection('sec-moradores')">
+      <div class="step-num">2</div>
+      <span>Moradores</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" onclick="scrollToSection('sec-revisao')">
+      <div class="step-num">3</div>
+      <span>Revisão</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div id="form-area">
+
+      <div class="info-box">
+        <strong>Objetivo:</strong> Este formulário tem como finalidade atualizar a base de dados da Associação Residencial Ermitage. Todas as informações são de uso exclusivo da administração e tratadas com sigilo. Campos marcados com <span style="color:var(--danger)">*</span> são obrigatórios.
+      </div>
+
+      <p class="required-note"><span>*</span> Campo obrigatório</p>
+
+      <!-- SEÇÃO 1: RESPONSÁVEL -->
+      <section class="form-section" id="sec-responsavel">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C9.79 2 8 3.79 8 6s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>
+          </div>
+          <h2>Dados do responsável pela unidade</h2>
+        </div>
+        <div class="section-body">
+
+          <div class="field">
+            <label for="endereco">Endereço da unidade <span class="req">*</span></label>
+            <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua das Palmeiras, 85 — Casa 3" autocomplete="street-address" required />
+          </div>
+
+          <div class="field">
+            <label for="nome">Nome completo do responsável <span class="req">*</span></label>
+            <input type="text" id="nome" name="nome" placeholder="Nome e sobrenome" autocomplete="name" required />
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="nascimento">Data de nascimento <span class="req">*</span></label>
+              <input type="date" id="nascimento" name="nascimento" required />
+            </div>
+            <div class="field">
+              <label for="telefone">Telefone / WhatsApp <span class="req">*</span></label>
+              <input type="tel" id="telefone" name="telefone" placeholder="(31) 9 0000-0000" autocomplete="tel" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">E-mail <span class="req">*</span></label>
+            <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required />
+          </div>
+
+
+
+        </div>
+      </section>
+
+      <!-- SEÇÃO 2: MORADORES -->
+      <section class="form-section" id="sec-moradores">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <h2>Demais moradores da unidade</h2>
+        </div>
+        <div class="section-body">
+          <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6">
+            Adicione todos os moradores que residem na mesma unidade, exceto o responsável já cadastrado acima.
+          </p>
+
+          <div id="moradores-lista"></div>
+
+          <button type="button" class="btn-add-morador" onclick="adicionarMorador()">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Adicionar morador
+          </button>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 3: REVISÃO -->
+      <section class="form-section" id="sec-revisao">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <h2>Revisão e envio</h2>
+        </div>
+        <div class="section-body">
+          <p style="font-size:0.84rem;color:var(--text-muted);line-height:1.6;margin-bottom:1rem">
+            Antes de enviar, revise as informações preenchidas. Após o envio, a administração da associação confirmará o recebimento por e-mail ou WhatsApp.
+          </p>
+
+          <div class="field">
+            <label for="obs">Observações adicionais (opcional)</label>
+            <textarea id="obs" name="obs" rows="3" placeholder="Informe algo relevante para a administração da associação..."></textarea>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-top:0.5rem">
+            <input type="checkbox" id="lgpd" name="lgpd" style="width:16px;height:16px;margin-top:2px;cursor:pointer;accent-color:var(--green-mid)" required />
+            <label for="lgpd" style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;cursor:pointer">
+              Autorizo o uso dos dados fornecidos pela Associação Residencial Ermitage para fins de gestão condominial, conforme a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018). <span class="req">*</span>
+            </label>
+          </div>
+
+        </div>
+      </section>
+
+      <button type="button" class="btn-submit" onclick="enviarFormulario()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        Enviar cadastro
+      </button>
+
+      <p class="form-footer">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
+        Dados protegidos — uso exclusivo da Associação Residencial Ermitage
+      </p>
+
+    </div><!-- /#form-area -->
+
+    <!-- TELA DE SUCESSO -->
+    <div id="success-screen">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+      </div>
+      <h2>Cadastro enviado!</h2>
+      <p>Obrigado por atualizar seus dados. A administração da Associação Residencial Ermitage entrará em contato em breve caso seja necessário algum esclarecimento.</p>
+      <button class="btn-novo" onclick="novoCadastro()">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        Novo cadastro
+      </button>
+    </div>
+
+  </main>
+
+  <script>
+    let contadorMorador = 0;
+
+    const relacoes = [
+      'Cônjuge / Companheiro(a)',
+      'Filho(a)',
+      'Pai / Mãe',
+      'Irmão / Irmã',
+      'Avô / Avó',
+      'Neto(a)',
+      'Outro familiar',
+      'Inquilino(a)',
+      'Funcionário(a) residente',
+      'Outro'
+    ];
+
+    function adicionarMorador() {
+      contadorMorador++;
+      const n = contadorMorador;
+      const lista = document.getElementById('moradores-lista');
+
+      const card = document.createElement('div');
+      card.className = 'morador-card';
+      card.id = 'morador-' + n;
+
+      const opcoesRelacao = relacoes.map(r => `<option value="${r}">${r}</option>`).join('');
+
+      card.innerHTML = `
+        <div class="morador-card-header">
+          <span class="morador-card-title">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Morador ${n}
+          </span>
+          <button type="button" class="btn-remove-morador" onclick="removerMorador(${n})">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            Remover
+          </button>
+        </div>
+        <div class="morador-card-body">
+          <div class="field">
+            <label>Nome completo <span class="req">*</span></label>
+            <input type="text" name="m${n}_nome" placeholder="Nome e sobrenome" required />
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Relação com o responsável <span class="req">*</span></label>
+              <select name="m${n}_relacao" required>
+                <option value="">Selecione...</option>
+                ${opcoesRelacao}
+              </select>
+            </div>
+            <div class="field">
+              <label>Data de nascimento</label>
+              <input type="date" name="m${n}_nascimento" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Telefone</label>
+            <input type="tel" name="m${n}_telefone" placeholder="(31) 9 0000-0000" />
+          </div>
+
+        </div>
+      `;
+
+      lista.appendChild(card);
+    }
+
+    function removerMorador(n) {
+      const card = document.getElementById('morador-' + n);
+      if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-6px)';
+        card.style.transition = 'opacity 0.2s, transform 0.2s';
+        setTimeout(() => card.remove(), 200);
+      }
+    }
+
+    async function enviarFormulario() {
+      const endereco = document.getElementById('endereco').value.trim();
+      const nome = document.getElementById('nome').value.trim();
+      const nascimento = document.getElementById('nascimento').value;
+      const telefone = document.getElementById('telefone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const obs = document.getElementById('obs').value.trim();
+      const lgpd = document.getElementById('lgpd').checked;
+
+      if (!endereco || !nome || !nascimento || !telefone || !email) {
+        alert('Por favor, preencha todos os campos obrigatórios do responsável.');
+        document.getElementById('sec-responsavel').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      if (!lgpd) {
+        alert('É necessário aceitar os termos de proteção de dados para enviar o formulário.');
+        document.getElementById('sec-revisao').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      // Valida moradores
+      const cards = document.querySelectorAll('.morador-card');
+      for (const card of cards) {
+        const nomeInput = card.querySelector('input[type=text]');
+        const relSelect = card.querySelector('select');
+        if (!nomeInput.value.trim() || !relSelect.value) {
+          alert('Preencha o nome e a relação de todos os moradores adicionados.');
+          card.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }
+
+      // Desabilita botão durante envio
+      const btnSubmit = document.querySelector('.btn-submit');
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="#b8960c" style="animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Enviando...`;
+
+      const estilo = `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
+      if (!document.getElementById('spin-style')) {
+        const s = document.createElement('style');
+        s.id = 'spin-style'; s.textContent = estilo;
+        document.head.appendChild(s);
+      }
+
+      const dataEnvio = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+      // Monta array de linhas — uma por pessoa
+      const linhas = [];
+
+      // Linha do responsável
+      linhas.push({
+        'Tipo': 'Responsável',
+        'Data de Envio': dataEnvio,
+        'Endereço': endereco,
+        'Nome': nome,
+        'Relação com Responsável': '—',
+        'Data de Nascimento': nascimento,
+        'Telefone': telefone,
+        'Email': email,
+        'Observações': obs || ''
+      });
+
+      // Uma linha por morador
+      cards.forEach(card => {
+        linhas.push({
+          'Tipo': 'Morador',
+          'Data de Envio': dataEnvio,
+          'Endereço': endereco,
+          'Nome': card.querySelector('input[type=text]')?.value.trim() || '',
+          'Relação com Responsável': card.querySelector('select')?.value || '',
+          'Data de Nascimento': card.querySelector('input[type=date]')?.value || '',
+          'Telefone': card.querySelector('input[type=tel]')?.value.trim() || '',
+          'Email': '—',
+          'Observações': ''
+        });
+      });
+
+      try {
+        const resp = await fetch('https://sheetdb.io/api/v1/1epqpu67yjkkr', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: linhas })
+        });
+
+        if (!resp.ok) throw new Error('Erro na resposta da API');
+
+        document.getElementById('form-area').style.display = 'none';
+        const success = document.getElementById('success-screen');
+        success.style.display = 'block';
+        success.scrollIntoView({ behavior: 'smooth' });
+
+      } catch (err) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="#b8960c"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Enviar cadastro`;
+        alert('Ocorreu um erro ao enviar. Verifique sua conexão e tente novamente.');
+        console.error(err);
+      }
+    }
+
+    function novoCadastro() {
+      document.getElementById('success-screen').style.display = 'none';
+      document.getElementById('form-area').style.display = 'block';
+      document.getElementById('moradores-lista').innerHTML = '';
+      contadorMorador = 0;
+      document.querySelectorAll('input:not([type=checkbox]), select, textarea').forEach(el => el.value = '');
+      document.getElementById('lgpd').checked = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
